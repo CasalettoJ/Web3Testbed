@@ -37,12 +37,26 @@ export default class Hello extends Component {
     });
   }
 
+  _startMine = async () => {
+    const accounts = await this._getAccounts(this.state.web3);
+    this.state.testCardInstance.mine({from: accounts[0]});
+  };
+
+  _stopMine = async () => {
+    const accounts = await this._getAccounts(this.state.web3);
+    this.state.testCardInstance.stopMine({from: accounts[0]});
+    const accountBal = await this.state.testCardInstance.balanceOf.call(accounts[0]);
+    this.setState({balance: accountBal.c[0]});
+  };
+
   render() {
     return (
       <div>
         Stored number (test): {this.state.storedValue} <br />
         Balance of Iron Ores: {this.state.balance} 
         <img src={ironImage} /> <br />
+        <button onClick={this._startMine}>Start Mining Iron</button>
+        <button onClick={this._stopMine}>Stop Mining Iron</button>
       </div>
     );
   }

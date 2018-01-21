@@ -12,21 +12,37 @@ export default class Hello extends Component {
     super(props);
     this.state = {
       web3: null,
-      testCard: null,
+      testCardInstance: null,
     };
   }
 
   async componentWillMount() {
       let results = await getWeb3;
-      this.setState({web3: results.web3, testCard: contract(TestCard) });
-      this.state.testCard.setProvider(this.state.web3.currentProvider);
+      const testCard = contract(TestCard);
+      testCard.setProvider(results.web3.currentProvider);
+      const testCardInstance = await testCard.deployed();
+      this.setState({web3: results.web3, testCardInstance: testCardInstance });
+      const accounts = await this._getAccounts(results.web3);
+      //console.log(await this.state.testCardInstance.set(5, {from: accounts[0]}));
+      const accountBal = await this.state.testCardInstance.balanceOf.call(accounts[0]);
+      const storedVal = await this.state.testCardInstance.get.call();
+      this.setState({storedValue: storedVal.c[0], balance: accountBal.c[0]});
+  }
+
+  _getAccounts(web3) {
+    return new Promise(function(resolve, reject) {
+      web3.eth.getAccounts((err, res) => {
+        resolve(res);
+      })
+    });
   }
 
   render() {
     return (
       <div>
-        Hello from react <br />
-        <img src={ironImage} />
+        Stored number (test): {this.state.storedValue} <br />
+        Balance of Iron Ores: {this.state.balance} 
+        <img src={ironImage} /> <br />
       </div>
     );
   }

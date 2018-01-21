@@ -14,4 +14,14 @@ contract TestCard is Ownable, StandardToken {
     totalSupply = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
   }
+
+  uint storedData;
+
+  function set(uint x) public {
+    storedData = x;
+  }
+
+  function get() public view returns (uint) {
+    return storedData;
+  }
 }

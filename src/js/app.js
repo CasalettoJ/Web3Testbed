@@ -68,15 +68,51 @@ export default class Hello extends Component {
       <div key={i}>{msg}</div>
     );
     return (
-      <div>
-        Balance of Iron Ores: {this.state.balance} 
-        <img src={ironImage} /> <br />
-        <button onClick={this._startMine}>Start Mining</button>
-        <button onClick={this._collectMine}>Collect Ore</button>
-        <button onClick={this._stopMine}>Stop Mining</button>
-        <br />
-        Adventure log: <br />
-        {listItems}
+      <div className="container">
+        <div className="row">
+          <div className="col s6 m6">
+            <div className="card teal">
+              <div className="card-content white-text">
+                <span className="card-title center">Iron Ore {this.state.balance > 0 && '('+ this.state.balance + ')'}</span>
+                <div className="row center">
+                  <img src={ironImage} /> 
+                </div>
+              </div>
+              <div className="card-action">
+                <a href="#" onClick={this._startMine}>Start Mining</a>
+                <a href="#" onClick={this._collectMine}>Collect Ore</a>
+                <a href="#"  onClick={this._stopMine}>Stop Mining</a>
+              </div>
+            </div>
+          </div>
+
+          <div className="col s6 m6">
+            <div className="card red darken-4">
+              <div className="card-content white-text">
+                <span className="card-title center">Coal</span>
+                <div className="row center">
+                  <img src={ironImage} /> 
+                </div>
+              </div>
+              <div className="card-action">
+                LOCKED (10 RLT to unlock)
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+        <div className="row">
+          <div className="col s12 m5">
+            <div className="card-panel teal">
+              <span className="white-text">
+              Adventure Log:
+              {listItems}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

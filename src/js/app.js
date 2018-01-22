@@ -13,6 +13,7 @@ export default class Hello extends Component {
     this.state = {
       web3: null,
       testCardInstance: null,
+      actions: [],
     };
   }
 
@@ -23,10 +24,8 @@ export default class Hello extends Component {
       const testCardInstance = await testCard.deployed();
       this.setState({web3: results.web3, testCardInstance: testCardInstance });
       const accounts = await this._getAccounts(results.web3);
-      //console.log(await this.state.testCardInstance.set(5, {from: accounts[0]}));
       const accountBal = await this.state.testCardInstance.balanceOf.call(accounts[0]);
-      const storedVal = await this.state.testCardInstance.get.call();
-      this.setState({storedValue: storedVal.c[0], balance: accountBal.c[0]});
+      this.setState({balance: accountBal.c[0]});
   }
 
   _getAccounts(web3) {
@@ -39,24 +38,39 @@ export default class Hello extends Component {
 
   _startMine = async () => {
     const accounts = await this._getAccounts(this.state.web3);
-    this.state.testCardInstance.mine({from: accounts[0]});
+    console.log( await this.state.testCardInstance.mine({from: accounts[0]}));
+    const actions = this.state.actions;
+    actions.push("Began to mine Iron Ore!");
+    console.log(actions);
+    this.setState({actions: actions});
   };
 
   _stopMine = async () => {
+    const oldBal = this.state.balance;
     const accounts = await this._getAccounts(this.state.web3);
-    this.state.testCardInstance.stopMine({from: accounts[0]});
+    console.log(await this.state.testCardInstance.stopMine({from: accounts[0]}));
     const accountBal = await this.state.testCardInstance.balanceOf.call(accounts[0]);
-    this.setState({balance: accountBal.c[0]});
+    console.log(await this.state.testCardInstance.balanceOf.call(accounts[0]));
+    console.log(accountBal)
+    this.setState({minedNum: accountBal.c[0] - oldBal, balance: accountBal.c[0]});
+    const actions = this.state.actions;
+    actions.push('Collected your ' + (accountBal.c[0] - oldBal).toString() + ' iron ore and stopped mining.');
+    this.setState({actions: actions});
   };
 
   render() {
+    const listItems = this.state.actions.map((msg, i) =>
+      <div key={i}>{msg}</div>
+    );
     return (
       <div>
-        Stored number (test): {this.state.storedValue} <br />
         Balance of Iron Ores: {this.state.balance} 
         <img src={ironImage} /> <br />
         <button onClick={this._startMine}>Start Mining Iron</button>
         <button onClick={this._stopMine}>Stop Mining Iron</button>
+        <br />
+        Adventure log: <br />
+        {listItems}
       </div>
     );
   }

@@ -5,7 +5,7 @@ import contract from 'truffle-contract';
 
 import '../css/style.css';
 import ironImage from '../assets/iron.gif'; 
-import TestCard from '../../build/contracts/TestCard.json'
+import TestCard from '../../build/contracts/IronOre.json'
 
 export default class Hello extends Component {
   constructor(props) {
@@ -38,23 +38,28 @@ export default class Hello extends Component {
 
   _startMine = async () => {
     const accounts = await this._getAccounts(this.state.web3);
-    console.log( await this.state.testCardInstance.mine({from: accounts[0]}));
+    console.log( await this.state.testCardInstance.startMine({from: accounts[0]}));
     const actions = this.state.actions;
     actions.push("Began to mine Iron Ore!");
-    console.log(actions);
     this.setState({actions: actions});
   };
 
   _stopMine = async () => {
+    const accounts = await this._getAccounts(this.state.web3);
+    console.log( await this.state.testCardInstance.stopMine({from: accounts[0]}));
+    const actions = this.state.actions;
+    actions.push("Stopped Mining Iron Ore..");
+    this.setState({actions: actions});
+  };
+
+  _collectMine = async () => {
     const oldBal = this.state.balance;
     const accounts = await this._getAccounts(this.state.web3);
-    console.log(await this.state.testCardInstance.stopMine({from: accounts[0]}));
+    console.log(await this.state.testCardInstance.collectMine({from: accounts[0]}));
     const accountBal = await this.state.testCardInstance.balanceOf.call(accounts[0]);
-    console.log(await this.state.testCardInstance.balanceOf.call(accounts[0]));
-    console.log(accountBal)
     this.setState({minedNum: accountBal.c[0] - oldBal, balance: accountBal.c[0]});
     const actions = this.state.actions;
-    actions.push('Collected your ' + (accountBal.c[0] - oldBal).toString() + ' iron ore and stopped mining.');
+    actions.push('Collected your ' + (accountBal.c[0] - oldBal).toString() + ' iron ore.');
     this.setState({actions: actions});
   };
 
@@ -66,8 +71,9 @@ export default class Hello extends Component {
       <div>
         Balance of Iron Ores: {this.state.balance} 
         <img src={ironImage} /> <br />
-        <button onClick={this._startMine}>Start Mining Iron</button>
-        <button onClick={this._stopMine}>Stop Mining Iron</button>
+        <button onClick={this._startMine}>Start Mining</button>
+        <button onClick={this._collectMine}>Collect Ore</button>
+        <button onClick={this._stopMine}>Stop Mining</button>
         <br />
         Adventure log: <br />
         {listItems}

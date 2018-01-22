@@ -1,5 +1,5 @@
-const TestCard = artifacts.require("TestCard")
+const IronOre = artifacts.require("IronOre")
 
 module.exports = function(deployer) {
-    deployer.deploy(TestCard);
+    deployer.deploy(IronOre);
 }
